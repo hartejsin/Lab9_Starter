@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lab 9</title>
+                        
 
   <style>
     button {
@@ -47,9 +48,22 @@
       width: 122px;
     }
   </style>
+
+<script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+  window.TrackJS && TrackJS.install({ 
+    token: "7638753f716e4c21841a57c065ee287b",
+    application: "errors"
+    // for more configuration options, see https://docs.trackjs.com
+  });
+</script>
+
+
 </head>
 
+
 <body>
+  
   <main>
     <form>
       <fieldset>
@@ -87,21 +101,138 @@
     </section>
   </main>
 
+ 
+  
+
   <script>
-    let form = document.querySelector('form');
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+    // Custom error type for division by zero
+class DivideByZeroError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'DivideByZeroError';
+  }
+}
+
+// Event listener for form submission
+let form = document.querySelector('form');
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  let output = document.querySelector('output');
+  let firstNum = parseFloat(document.querySelector('#first-num').value);
+  let secondNum = parseFloat(document.querySelector('#second-num').value);
+  let operator = document.querySelector('#operator').value;
+  try {
+    if (operator === '/' && secondNum === 0) {
+      throw new DivideByZeroError('Cannot divide by zero');
+    }
+    let result = eval(`${firstNum} ${operator} ${secondNum}`);
+    output.innerHTML = result;
+  } catch (error) {
+    if (error instanceof DivideByZeroError) {
+      output.innerHTML = error.message;
+      console.log(error.message)
+    } else {
+      output.innerHTML = 'An error occurred.';
+      console.log(error.message)
+    }
+  } finally {
+    document.querySelector('#first-num').value = ''; // Clearing the inputs
+    document.querySelector('#second-num').value = ''; // Clearing the inputs
+  }
+});
+
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    function getRandomNumber() {
+  return Math.floor(Math.random() * 100) + 1;
+}
+
+// Function to generate random array of numbers
+function getRandomArray(length) {
+  return Array.from({ length }, () => getRandomNumber());
+}
+
+// Function to generate random object
+function getRandomObject() {
+  return {
+    name: 'John',
+    age: getRandomNumber(),
+    city: 'New York'
+  };
+}
+
+errorBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    let data;
+    switch (btn.textContent) {
+      case 'Console Log':
+        data = 'This is a console log message.';
+        console.log(data);
+        break;
+      case 'Console Error':
+        data = 'This is a console error message.';
+        console.error(data);
+        break;
+      case 'Console Table':
+        data = getRandomArray(5);
+        console.table(data);
+        break;
+      case 'Console Dir':
+        data = getRandomObject();
+        console.dir(data);
+        break;
+      case 'Console dirxml':
+        data = '<p>This is a paragraph</p>';
+        console.dirxml(data);
+        break;
+      case 'Console Group Start':
+        console.group('Group Example');
+        console.log('Inside group');
+        console.log('Inside group');
+        console.groupEnd();
+        break;
+      case 'Console Group End':
+        console.groupEnd();
+        break;
+      case 'Console Count':
+        console.count('Count Example');
+        break;
+      case 'Console Warn':
+        console.warn('This is a console warning message.');
+        break;
+      case 'Console Assert':
+        console.assert(1 === 2, 'Assertion failed: 1 !== 2');
+        break;
+      case 'Console Clear':
+        console.clear();
+        break;
+      case 'Start Timer':
+        console.time('Timer');
+        break;
+      case 'End Timer':
+        console.timeEnd('Timer');
+        break;
+      case 'Console Trace':
+        console.trace('Trace example');
+        break;
+      case 'Trigger a Global Error':
+        throw new Error('Global error');
+        break;
+      default:
+        break;
+    }
+  });
+});
+
+window.onerror = function(message, source, lineno, colno, error) {
+  console.error('An error occurred:', message, 'at', source, 'line', lineno, 'column', colno);
+};
+
+
+
   </script>
 </body>
 
